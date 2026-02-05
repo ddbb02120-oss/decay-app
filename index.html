@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content=""width=device-width, initial-scale="1.0">
+    <title>Decay Tracker</title>
+    <style>
+      body { font-family: system-ui; padding: 20px; }
+      input, button { font-size: 1.2em; margin-top: 10px; }
+    </style>
+  </head>
+  <body>
+
+    <h2>Current Value</h2>
+    <h1 id="value">--</h1>
+
+    <input id="add_amount" type="number" placeholder="Add amount">
+    <br>
+    <button onclick="add()">Add</button>
+
+    <script>
+      const DECAY_RATE_PER_HOUR = 81.25;
+
+      function load() {
+        let value = Number(localStorage.getItem("value")) || 100;
+        let last = Number(localStorage.getItem("last")) || Date.now();
+
+        let now = Date.now();
+        let elapsed_hours = (now - last) / 3600000;
+        value -= elapsed_hours * DECAY_RATE_PER_HOUR;
+
+        localStorage.setItem("value", value);
+        localStorage.setItem("last", now);
+
+        document.getElementById("value").innerText = value.toFixed(2);
+      }
+
+      function add() {
+        load();
+        let amt = Number(document.getElementById("add_amount").value);
+        if (!isNaN(amt)) {
+          let value = Number(localStorage.getItem("value"));
+          value += amt;
+          localStorage.setItem("value", value);
+          document.getElementById("value").innerText = value.toFixed(2);
+        }
+        document.getElementById("add_amount").value = "";
+      }
+
+      load();
+    </script>
+    
+  </body>
+</html>
